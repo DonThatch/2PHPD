@@ -1,0 +1,530 @@
+#include <Keypad.h>
+#include <LiquidCrystal.h>
+#include <Wire.h>
+
+LiquidCrystal lcd(4, 3, 2, A0, A1, A2);
+
+byte smileyHappy[8] = {
+    B00000,
+    B10001,
+    B00000,
+    B00000,
+    B10001,
+    B01110,
+    B00000,
+};
+
+byte smileySad[8] = {
+    B00000,
+    B10001,
+    B00000,
+    B00000,
+    B01110,
+    B10001,
+    B00000,
+};
+
+byte smileyWink[8] = {
+    B00000,
+    B10001,
+    B00000,
+    B00000,
+    B01010,
+    B00100,
+    B00000,
+};
+
+byte smileyAngry[8] = {
+    B01010,
+    B00100,
+    B10001,
+    B00000,
+    B01110,
+    B00000,
+    B00000,
+};
+
+byte bell[8] = {
+    B00100,
+    B01110,
+    B01110,
+    B11111,
+    B11111,
+    B00100,
+    B00000,
+};
+
+const int buzzer = 3;
+const byte ROWS = 4;
+const byte COLS = 4;
+char keys[ROWS][COLS] = {
+    {'1', '2', '3', 'A'},
+    {'4', '5', '6', 'B'},
+    {'7', '8', '9', 'C'},
+    {'*', '0', '#', 'D'},
+};
+byte rowPins[ROWS] = {13, 12, 11, 10};
+byte colPins[COLS] = {9, 8, 7, 6};
+Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
+
+String onglets[3] = {"Message", "Parametres", "Contacts"};
+String parametreOnglet[3] = {"Volume", "Luminosite", "Musique"};
+String MusicOptions[2] = {"Jouer musique", "Creer musique"};
+String AvailableMusic[4] = {"twinkle", "ode", "cantina", "personnalisee"};
+int ongletActuel = 0;
+int paramActuel = 0;
+int MusicParamActuel = -1;
+int currentMusic = 0;
+int currentOption = 0;
+
+bool enModeEdition = false;
+bool menuParam = false;
+String currentMessage = "";
+unsigned long lastKeyPressTime = 0;
+char lastKey = '\0';
+int keyPressCount = 0;
+const unsigned long KEY_PRESS_DELAY = 1000;
+int brightness = 1;
+int brightnessPourcent;
+
+void setup()
+{
+  Wire.begin(4);
+  Wire.onReceive(receiveEvent);
+  pinMode(5, OUTPUT);
+  analogWrite(5, brightness);
+  Serial.begin(9600);
+  lcd.begin(16, 2);
+  lcd.createChar(0, smileyHappy);
+  lcd.createChar(1, smileySad);
+  lcd.createChar(2, smileyWink);
+  lcd.createChar(3, smileyAngry);
+  lcd.createChar(4, bell);
+  afficherOnglet(ongletActuel);
+}
+
+void loop()
+{
+  char key = keypad.getKey();
+  unsigned long currentTime = millis();
+
+  if (key == '*')
+  {
+    digitalWrite(3, LOW);
+    enModeEdition = false;
+    menuParam = false;
+    afficherOnglet(ongletActuel);
+    return;
+  }
+
+  if (!enModeEdition)
+  {
+    switch (key)
+    {
+    case 'A':
+      delay(300);
+      ongletActuel = (ongletActuel + 1) % 3;
+      afficherOnglet(ongletActuel);
+      break;
+    case 'B':
+      ongletActuel = (ongletActuel - 1 + 3) % 3;
+      afficherOnglet(ongletActuel);
+      break;
+    case 'C':
+      if (ongletActuel == 0)
+      {
+        enModeEdition = true;
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("Ecrire :");
+        lcd.setCursor(0, 1);
+        lcd.print(currentMessage);
+      }
+      else if (ongletActuel == 1)
+      {
+        enModeEdition = true;
+        lcd.clear();
+        lcd.setCursor(0, 0);
+      }
+      else if (ongletActuel == 3)
+      {
+        enModeEdition = true;
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("Nouveau Contact :");
+        lcd.setCursor(0, 1);
+        lcd.print(currentMessage);
+      }
+      break;
+    }
+  }
+  else
+  {
+    if (ongletActuel == 0)
+    {
+      if (key)
+      {
+        if (key != lastKey || currentTime - lastKeyPressTime > KEY_PRESS_DELAY)
+        {
+          if (lastKey != '\0' && lastKey != 'C' && lastKey != 'D')
+          {
+            addLetterToMessage();
+          }
+          lastKey = key;
+          keyPressCount = 1;
+        }
+        else if (key == lastKey)
+        {
+          keyPressCount++;
+        }
+
+        if (key == 'C')
+        {
+          addLetterToMessage();
+        }
+        else if (key == 'D' && currentMessage.length() > 0)
+        {
+          currentMessage.remove(currentMessage.length() - 1);
+          lcd.clear();
+          lcd.print(currentMessage);
+        }
+        else
+        {
+          lastKeyPressTime = currentTime;
+          showCurrentLetter();
+        }
+      }
+    }
+    else if (ongletActuel == 1)
+    {
+      if (!menuParam)
+      {
+        switch (key)
+        {
+        case 'A':
+          if (paramActuel < 2)
+          {
+            paramActuel += 1;
+          }
+          else
+          {
+            paramActuel = 0;
+          }
+          afficherParam(paramActuel);
+          break;
+        case 'B':
+          if (paramActuel > 0)
+          {
+            paramActuel -= 1;
+          }
+          else
+          {
+            paramActuel = 2;
+          }
+          afficherParam(paramActuel);
+          break;
+        case 'C':
+          if (paramActuel == 0)
+          {
+            menuParam = true;
+            pinMode(3, OUTPUT);
+            lcd.clear();
+            lcd.setCursor(0, 0);
+            lcd.print("Diminuer : 1,");
+            lcd.setCursor(0, 1);
+            lcd.print("Augmenter : 2");
+          }
+          else if (paramActuel == 1)
+          {
+            menuParam = true;
+            lcd.clear();
+            lcd.setCursor(0, 0);
+            lcd.print("Diminuer : 1,");
+            lcd.setCursor(0, 1);
+            lcd.print("Augmenter : 2");
+          }
+          else if (paramActuel == 2)
+          {
+            menuParam = true;
+            lcd.clear();
+            lcd.setCursor(0, 0);
+          }
+        }
+      }
+      else
+      {
+        if (paramActuel == 0)
+        {
+          if (key)
+          {
+            if (key == '1')
+            {
+              sendCommandToSlave(90);
+            }
+            else if (key == '2')
+            {
+              sendCommandToSlave(91);
+            }
+          }
+        }
+        else if (paramActuel == 1)
+        {
+          if (key)
+          {
+            if (key == '1')
+            {
+              decreaseBrightness();
+            }
+            else if (key == '2')
+            {
+              increaseBrightness();
+            }
+          }
+        }
+        else if (paramActuel == 2)
+        {
+          if (MusicParamActuel == -1)
+          {
+            switch (key)
+            {
+            case 'A':
+              if (currentOption >= sizeof(MusicOptions) / sizeof(MusicOptions[0]) - 1)
+              {
+                currentOption = 0;
+              }
+              else
+              {
+                currentOption += 1;
+              }
+              afficherMusicMenu(currentOption);
+              break;
+            case 'B':
+              if (currentOption > 0)
+              {
+                currentOption -= 1;
+              }
+              else
+              {
+                currentOption = sizeof(MusicOptions) / sizeof(MusicOptions[0]) - 1;
+              }
+              afficherMusicMenu(currentOption);
+              break;
+            case 'C':
+              MusicParamActuel = currentOption;
+              break;
+            }
+          }
+          else if (MusicParamActuel == 0)
+          {
+            switch (key)
+            {
+            case 'A':
+              if (currentMusic >= sizeof(AvailableMusic) / sizeof(AvailableMusic[0]) - 1)
+              {
+                currentMusic = 0;
+              }
+              else
+              {
+                currentMusic += 1;
+              }
+              afficherMusic(currentMusic);
+              break;
+            case 'B':
+              if (currentMusic > 0)
+              {
+                currentMusic -= 1;
+              }
+              else
+              {
+                currentMusic = sizeof(AvailableMusic) / sizeof(AvailableMusic[0]) - 1;
+              }
+              afficherMusic(currentMusic);
+              break;
+            case 'C':
+              if (currentMusic == 0)
+              {
+                sendCommandToSlave(0);
+              }
+              else if (currentMusic == 1)
+              {
+                sendCommandToSlave(1);
+              }
+              else if (currentMusic == 2)
+              {
+                sendCommandToSlave(2);
+              }
+              else if (currentMusic == 3)
+              {
+                sendCommandToSlave(3);
+              }
+            }
+          }
+          else if (MusicParamActuel == 1)
+          {
+            switch (key)
+            {
+            case '1':
+              sendCommandToSlave(10);
+              break;
+            case '2':
+              sendCommandToSlave(11);
+              break;
+            case '3':
+              sendCommandToSlave(12);
+              break;
+            case '4':
+              sendCommandToSlave(13);
+              break;
+            case '5':
+              sendCommandToSlave(14);
+              break;
+            case '6':
+              sendCommandToSlave(15);
+              break;
+            case '7':
+              sendCommandToSlave(16);
+              break;
+            case '8':
+              sendCommandToSlave(17);
+              break;
+            case '9':
+              sendCommandToSlave(18);
+              break;
+            case 'D':
+              MusicParamActuel = -1;
+              afficherMusicMenu(0);
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+void receiveEvent(int howMany)
+{
+  while (Wire.available())
+  {
+    char c = Wire.read();
+    Serial.print(c);
+  }
+}
+
+void afficherOnglet(int onglet)
+{
+  lcd.clear();
+  lcd.print(onglets[onglet]);
+  enModeEdition = false;
+}
+
+void afficherParam(int param)
+{
+  lcd.clear();
+  lcd.print(parametreOnglet[param]);
+  menuParam = false;
+}
+
+void afficherMusicMenu(int menu)
+{
+  lcd.clear();
+  lcd.print(MusicOptions[menu]);
+}
+void afficherMusic(int music)
+{
+  lcd.clear();
+  lcd.print(AvailableMusic[music]);
+}
+void addLetterToMessage()
+{
+  char letterToAdd = getLetterFromKeyPress(lastKey, keyPressCount);
+  currentMessage += letterToAdd;
+  lcd.clear();
+  lcd.setCursor(0, 1);
+  lcd.print(currentMessage);
+  resetKeyState();
+}
+
+char getLetterFromKeyPress(char key, int count)
+{
+  if (key == '2')
+  {
+    return 'A' + (count - 1) % 3;
+  }
+  else if (key == '3')
+  {
+    return 'D' + (count - 1) % 3;
+  }
+  else if (key == '4')
+  {
+    return 'G' + (count - 1) % 3;
+  }
+  else if (key == '5')
+  {
+    return 'J' + (count - 1) % 3;
+  }
+  else if (key == '6')
+  {
+    return 'M' + (count - 1) % 3;
+  }
+  else if (key == '7')
+  {
+    return 'P' + (count - 1) % 4;
+  }
+  else if (key == '8')
+  {
+    return 'T' + (count - 1) % 3;
+  }
+  else if (key == '9')
+  {
+    return 'W' + (count - 1) % 4;
+  }
+  else if (key == '1')
+  {
+    return (uint8_t)(count - 1) % 5;
+  }
+  return ' ';
+}
+
+void showCurrentLetter()
+{
+  char letter = getLetterFromKeyPress(lastKey, keyPressCount);
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Ecrire :");
+  lcd.setCursor(0, 1);
+  lcd.print(currentMessage);
+  lcd.print(letter);
+}
+
+void resetKeyState()
+{
+  lastKey = '\0';
+  keyPressCount = 0;
+  lastKeyPressTime = millis();
+}
+
+void increaseBrightness()
+{
+  if (brightness > 9)
+  {
+    brightness -= 10;
+    analogWrite(5, brightness);
+    lcd.setCursor(0, 1);
+  }
+}
+
+void decreaseBrightness()
+{
+  if (brightness < 246)
+  {
+    brightness += 10;
+    analogWrite(5, brightness);
+    lcd.setCursor(0, 1);
+  }
+}
+
+void sendCommandToSlave(int command)
+{
+  Serial.write(command);
+}
