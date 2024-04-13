@@ -1,6 +1,4 @@
 
-C
-src/Controller/test,9/4/94e078b2cefb7e22c9231b23ab972403a10c2f7b
 I
 src/Entity/Tournament.php,a/1/a12dff2b1c5470fd5272cc60ab51250117baab49
 Y
@@ -23,3 +21,17 @@ S
 #.idea/sonarlint/issuestore/index.pb,9/f/9fe84ebb15faf917b7def6236dba604453cc61e0
 Å
 Q.idea/sonarlint/securityhotspotstore/a/1/a12dff2b1c5470fd5272cc60ab51250117baab49,c/3/c35ff9f6191862cd9f49f64f6d54e20c3d67a990
+4
+.env,3/c/3c84dcdc6bbe3d7817c49dcdc327b926fea1808a
+P
+ src/DataFixtures/AppFixtures.php,b/d/bd40e5504ff9d25586c516537316c24981df19f7
+M
+config/packages/security.yaml,c/5/c5f941b4d4e9404f23935164fabdd261abb68e93
+B
+config/bundles.php,f/a/fa9a09a4e1ae4281250526d3dec214138beb5735
+=
+composer.lock,c/3/c3262e2a0879195bd6a727e90f768bc85ad79ffd
+<
+symfony.lock,e/1/e17766cca3407ba620a8cef1c14d37208a74e8a4
+=
+composer.json,3/9/3957b91a0d8450cea0115cfd5af69eac90d75897
