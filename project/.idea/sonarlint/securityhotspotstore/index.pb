@@ -1,3 +1,25 @@
 
 C
 src/Controller/test,9/4/94e078b2cefb7e22c9231b23ab972403a10c2f7b
+I
+src/Entity/Tournament.php,a/1/a12dff2b1c5470fd5272cc60ab51250117baab49
+Y
+)src/Repository/RegistrationRepository.php,6/7/67052ed5fab37d0e7b2505d749cb86f1d26dca9b
+K
+src/Entity/Registration.php,9/1/91e027f0410b7c0ef1cf2c374364d6e66685fd3c
+W
+'src/Repository/SportMatchRepository.php,7/2/72355a656f2283d17ae380a2c65b01b054c4ddff
+W
+'src/Repository/TournamentRepository.php,d/f/dfbaaf24af320a0e152636cddd613f4b77b180bd
+I
+src/Entity/SportMatch.php,8/b/8bd0a2cfaa7b603d347e136c0f58990a6bf23c21
+Q
+!src/Repository/UserRepository.php,9/4/943a623b5e2fd95ea78f6287fc600a6f8e0a5235
+C
+src/Entity/User.php,0/a/0a3e99b9da178509aeb5b3fa6f5dce46bc0eb8be
+]
+-.idea/sonarlint/securityhotspotstore/index.pb,8/8/88a9255124c95bdc913197c120a8d560edc59c8e
+S
+#.idea/sonarlint/issuestore/index.pb,9/f/9fe84ebb15faf917b7def6236dba604453cc61e0
+Å
+Q.idea/sonarlint/securityhotspotstore/a/1/a12dff2b1c5470fd5272cc60ab51250117baab49,c/3/c35ff9f6191862cd9f49f64f6d54e20c3d67a990
