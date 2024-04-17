@@ -39,3 +39,5 @@ Y
 )src/Controller/RegistrationController.php,b/6/b6a5dce1eac6107738aa6c9b363b605aa2315b2c
 W
 'src/Controller/TournamentController.php,f/a/fa1780918aed9931eb933add8b9f20d5e250ff35
+Q
+!src/Controller/UserController.php,8/7/87b99206717ccce222f05190f36b6273e3ea6228
