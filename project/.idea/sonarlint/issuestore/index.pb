@@ -35,3 +35,7 @@ B
 symfony.lock,e/1/e17766cca3407ba620a8cef1c14d37208a74e8a4
 =
 composer.json,3/9/3957b91a0d8450cea0115cfd5af69eac90d75897
+Y
+)src/Controller/RegistrationController.php,b/6/b6a5dce1eac6107738aa6c9b363b605aa2315b2c
+W
+'src/Controller/TournamentController.php,f/a/fa1780918aed9931eb933add8b9f20d5e250ff35
