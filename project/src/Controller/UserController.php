@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\UserService;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,29 +32,19 @@ class UserController extends AbstractController
 
     // Create a user
     #[Route('/api/users', name: 'user_create', methods: ['POST'])]
-    public function create(Request $request): Response
-    {
-        // Decode the JSON request body into an array
+    public function create(Request $request, UserService $userService): Response {
         $data = json_decode($request->getContent(), true);
 
-        // Check for the required fields in the JSON data
-        if (!isset($data['username'], $data['email'], $data['password'])) {
+        if (!isset($data ['last_name'], $data ['first_name'],$data['username'], $data['email_address'], $data['password'], $data['status'])) {
             return $this->json(['error' => 'Missing required fields'], 400);
         }
 
-        // Create a new user entity
-        $user = new User();
-        $user->setUsername($data['username']);
-        $user->setEmail($data['email']);
-        $user->setPassword($data['password']);
-
-//        // Save the user to the database
-//        $entityManager = $this->getDoctrine()->getManager();
-//        $entityManager->persist($user);
-//        $entityManager->flush();
-
-        // Return a JSON response with the new user's ID
-        return $this->json(['id' => $user->getId()]);
+        try {
+            $user = $userService->createUser($data);
+            return $this->json(['id' => $user->getId()]);
+        } catch (\Exception $e) {
+            return $this->json(['error' => $e->getMessage()], 400);
+        }
     }
 
     // Get details of a user
@@ -74,37 +65,22 @@ class UserController extends AbstractController
 
     // Update a user
     #[Route('/api/users/{id}', name: 'user_update', methods: ['PUT'])]
-    public function update($id, Request $request): Response
-    {
-        // Get the user by ID
-        $user = $this->userRepository->find($id);
+    public function update($id, Request $request, UserService $userService): Response {
+        $data = json_decode($request->getContent(), true);
 
-        // If the user does not exist, return a 404 response
+        $user = $this->userRepository->find($id);
         if (!$user) {
             return $this->json(['error' => 'User not found'], 404);
         }
 
-        // Decode the JSON request body into an array
-        $data = json_decode($request->getContent(), true);
-
-        // Update the user entity
-        if (isset($data['username'])) {
-            $user->setUsername($data['username']);
+        try {
+            $userService->updateUser($user, $data);
+            return $this->json($user);
+        } catch (\Exception $e) {
+            return $this->json(['error' => $e->getMessage()], 400);
         }
-        if (isset($data['email'])) {
-            $user->setEmail($data['email']);
-        }
-        if (isset($data['password'])) {
-            $user->setPassword($data['password']);
-        }
-
-//        // Persist the updated user object
-//        $entityManager = $this->getDoctrine()->getManager();
-//        $entityManager->flush();
-
-        // Return a JSON response
-        return $this->json($user);
     }
+
 
     // Delete a user
     #[Route('/api/users/{id}', name: 'user_delete', methods: ['DELETE'])]

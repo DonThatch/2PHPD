@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\TournamentService;
 use App\Repository\TournamentRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -48,37 +49,25 @@ class TournamentController extends AbstractController
 
     // Create a new tournament
     #[Route('/api/tournaments', name: 'tournament_create', methods: ['POST'])]
-    public function create(Request $request): Response
-    {
-        // Decode the JSON request body into an array
+    public function create(Request $request, TournamentService $tournamentService): Response {
         $data = json_decode($request->getContent(), true);
 
-        // Check for the required fields in the JSON data
-        if (!isset($data['tournamentName'], $data['startDate'], $data['endDate'], $data['description'])) {
-            return $this->json(['error' => 'Missing required fields'], 400);
+        if ($data === null || !isset($data['tournamentName'], $data['startDate'], $data['endDate'], $data['description'], $data['organizer_id'])) {
+            return $this->json(['error' => 'Invalid or missing JSON data'], 400);
         }
 
-        // Create a new tournament object
-        $tournament = new Tournament();
-        $tournament->setTournamentName($data['tournamentName']);
-        $tournament->setStartDate(new DateTime($data['startDate']));
-        $tournament->setEndDate(new DateTime($data['endDate']));
-        $tournament->setDescription($data['description']);
+        try {
+            $tournament = $tournamentService->createTournament($data);
+        } catch (\Exception $e) {
+            return $this->json(['error' => $e->getMessage()], 400);
+        }
 
-        // Optional fields
-        $tournament->setLocation($data['location'] ?? 'Default Location');
-        $tournament->setMaxParticipants($data['maxParticipants'] ?? 0);
-        $tournament->setStatus($data['status'] ?? false);
-        $tournament->setSport($data['sport'] ?? 'Undefined');
-
-        // Persist the tournament object
-        // $em = $this->getDoctrine()->getManager();
-        // $em->persist($tournament);
-        // $em->flush();
-
-        // Return a JSON response
-        return $this->json($tournament);
+        return $this->json([
+            'success' => true,
+            'id' => $tournament->getId()
+        ]);
     }
+
 
     // Update an existing tournament
     #[Route('/api/tournaments/{id}', name: 'tournament_update', methods: ['PUT'])]
