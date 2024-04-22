@@ -52,7 +52,7 @@ class TournamentController extends AbstractController
     public function create(Request $request, TournamentService $tournamentService): Response {
         $data = json_decode($request->getContent(), true);
 
-        if ($data === null || !isset($data['tournamentName'], $data['startDate'], $data['endDate'], $data['description'], $data['organizer_id'])) {
+        if ($data === null || !isset($data['tournament_name'], $data['start_date'], $data['end_date'], $data['description'], $data ['max_participants'], $data['organizer_id'])) {
             return $this->json(['error' => 'Invalid or missing JSON data'], 400);
         }
 
@@ -85,14 +85,14 @@ class TournamentController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         // Update the tournament object with the new data
-        if (isset($data['tournamentName'])) {
-            $tournament->setTournamentName($data['tournamentName']);
+        if (isset($data['tournament_name'])) {
+            $tournament->setTournamentName($data['tournament_name']);
         }
         if (isset($data['startDate'])) {
-            $tournament->setStartDate(new DateTime($data['startDate']));
+            $tournament->setStartDate(new DateTime($data['start_date']));
         }
         if (isset($data['endDate'])) {
-            $tournament->setEndDate(new DateTime($data['endDate']));
+            $tournament->setEndDate(new DateTime($data['end_date']));
         }
         if (isset($data['description'])) {
             $tournament->setDescription($data['description']);
@@ -101,7 +101,7 @@ class TournamentController extends AbstractController
             $tournament->setLocation($data['location']);
         }
         if (isset($data['maxParticipants'])) {
-            $tournament->setMaxParticipants($data['maxParticipants']);
+            $tournament->setMaxParticipants($data['max_participants']);
         }
         if (isset($data['status'])) {
             $tournament->setStatus($data['status']);

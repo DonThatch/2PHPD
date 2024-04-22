@@ -57,7 +57,7 @@ class Tournament
     private ?User $organizer = null;
 
     #[ORM\ManyToOne(inversedBy: 'relWinTournamentUser')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?User $winner = null;
 
     public function __construct()

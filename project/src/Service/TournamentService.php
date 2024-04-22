@@ -16,7 +16,7 @@ class TournamentService {
     }
 
     public function createTournament(array $data) {
-        if (!isset($data['tournamentName'], $data['startDate'], $data['endDate'], $data['description'], $data['organizer_id'])) {
+        if (!isset($data['tournament_name'], $data['start_date'], $data['end_date'], $data['description'], $data['max_participants'], $data['organizer_id'])) {
             throw new \Exception('Missing required fields');
         }
 
@@ -27,12 +27,12 @@ class TournamentService {
 
         $tournament = new Tournament();
         $tournament->setOrganizer($organizer);
-        $tournament->setTournamentName($data['tournamentName']);
-        $tournament->setStartDate(new DateTime($data['startDate']));
-        $tournament->setEndDate(new DateTime($data['endDate']));
+        $tournament->setTournamentName($data['tournament_name']);
+        $tournament->setStartDate(new DateTime($data['start_date']));
+        $tournament->setEndDate(new DateTime($data['end_date']));
         $tournament->setDescription($data['description']);
         $tournament->setLocation($data['location'] ?? 'Default Location');
-        $tournament->setMaxParticipants($data['maxParticipants'] ?? 0);
+        $tournament->setMaxParticipants($data['max_participants'] ?? 0);
         $tournament->setStatus($data['status'] ?? false);
         $tournament->setSport($data['sport'] ?? 'Undefined');
 
