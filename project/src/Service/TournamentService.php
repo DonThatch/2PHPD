@@ -41,8 +41,7 @@ class TournamentService {
 
         return $tournament;
     }
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 
     public function getAllTournaments() {
         return $this->entityManager->createQueryBuilder()
@@ -55,8 +54,4 @@ class TournamentService {
             ->getResult();
     }
 
-=======
->>>>>>> parent of 8f33b8e (inscription front + maj controller)
-=======
->>>>>>> parent of 8f33b8e (inscription front + maj controller)
 }

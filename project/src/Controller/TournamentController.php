@@ -16,8 +16,7 @@ class TournamentController extends AbstractController
 {
     private $tournamentRepository;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
+
     private $tournamentService;
 
     private $serializer;
