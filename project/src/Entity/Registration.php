@@ -16,7 +16,7 @@ class Registration
 
     #[ORM\ManyToOne(inversedBy: 'relRegistrationUser')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $player = null;
+    private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'relRegistrationTournament')]
     #[ORM\JoinColumn(nullable: false)]
@@ -35,12 +35,12 @@ class Registration
 
     public function getPlayer(): ?User
     {
-        return $this->player;
+        return $this->user;
     }
 
-    public function setPlayer(?User $player): static
+    public function setPlayer(?User $user): static
     {
-        $this->player = $player;
+        $this->user = $user;
 
         return $this;
     }

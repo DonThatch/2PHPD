@@ -30,18 +30,28 @@ class RegistrationController extends AbstractController
     }
 
     // Register a player for a tournament
-    #[Route('/api/tournaments/{id}/registrations', name: 'register_player', methods : ['POST'])]
-    public function register(Request $request, int $id, EntityManagerInterface $entityManager, UserRepository $userRepository, TournamentRepository $tournamentRepository): Response
-    {
-        $userId = $request->request->get('user_id');
-        $user = $userRepository->find($id);
-        $tournament = $tournamentRepository->find($id);
+    #[Route('/api/tournaments/{tournamentId}/registrations', name: 'register_player', methods: ['POST'])]
+    public function register(Request $request, int $tournamentId): Response {
+        $data = json_decode($request->getContent(), true);
+        $userId = $data['user_id'] ?? null;
 
-        if (!$user || !$tournament) {
-            return $this->json(['error' => 'User or tournament not found'], 404);
+        if ($userId === null) {
+            return $this->json(['error' => 'User ID must be provided'], 400);
         }
 
-        return $this->json(['message' => 'Registered successfully', 'userId' => $user->getId(), 'tournamentId' => $tournament->getId()]);
+        try {
+            $userId = (int) $userId;
+            $registration = $this->registrationService->registerUserToTournament($userId, $tournamentId);
+            return $this->json([
+                'message' => 'Registered successfully',
+                'userId' => $registration->getUser()->getId(),
+                'tournamentId' => $registration->getTournament()->getId()
+            ]);
+        } catch (\Exception $e) {
+            // Log the error or handle it appropriately
+            $status = $e->getCode() >= 100 && $e->getCode() < 600 ? $e->getCode() : 500;
+            return $this->json(['error' => $e->getMessage()], $status);
+        }
     }
 
     // Cancel a player's registration for a tournament

@@ -21,10 +21,13 @@ class RegistrationService {
         $this->tournamentRepository = $tournamentRepository;
     }
 
-    public function registerUserToTournament(User $user, int $tournamentId): Registration {
-        $tournament = $this->tournamentRepository->find($tournamentId);
-        if (!$tournament) {
-            throw new \Exception('Tournament not found');
+    public function registerUserToTournament(int $userId, int $tournamentId): Registration
+    {
+        $user = $this->entityManager->getRepository(User::class)->find($userId);
+        $tournament = $this->entityManager->getRepository(Tournament::class)->find($tournamentId);
+
+        if (!$user || !$tournament) {
+            throw new \Exception('User or tournament not found');
         }
 
         $existingRegistration = $this->registrationRepository->findOneBy(['tournament' => $tournament, 'user' => $user]);
@@ -34,7 +37,7 @@ class RegistrationService {
 
         $registration = new Registration();
         $registration->setTournament($tournament);
-        $registration->setUser($user);
+        $registration->setPlayer($user);
 
         $this->entityManager->persist($registration);
         $this->entityManager->flush();
