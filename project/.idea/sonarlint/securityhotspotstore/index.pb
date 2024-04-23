@@ -47,3 +47,5 @@ Q
 !src/Service/TournamentService.php,8/0/80888907a7e58b2d42f6eb366f7688c3abfd5b6f
 K
 src/Service/UserService.php,0/0/004fcc30d3beb61e17be4d8de9b0902a9ee19416
+S
+#src/Service/RegistrationService.php,7/6/76b1d5ce18f7787cddedbda0f478c43d850c0503
