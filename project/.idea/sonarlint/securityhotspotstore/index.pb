@@ -77,3 +77,5 @@ M
 public/admin/registration.css,8/4/8492084182c3e97eb76a13a4df4e3612306bc12e
 L
 public/admin/registration.js,d/b/db28d5683c9baf29a6cfc25eff07698082edf028
+P
+ config/packages/nelmio_cors.yaml,c/7/c7cee19ef8bd16fdb92a74b9724402fea6a849d2

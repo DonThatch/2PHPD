@@ -35,7 +35,7 @@ class UserController extends AbstractController
     public function create(Request $request, UserService $userService): Response {
         $data = json_decode($request->getContent(), true);
 
-        if (!isset($data ['last_name'], $data ['first_name'],$data['username'], $data['email_address'], $data['password'], $data['status'])) {
+        if (!isset($data ['last_name'], $data ['first_name'],$data['username'], $data['email_address'], $data['password'])) {
             return $this->json(['error' => 'Missing required fields'], 400);
         }
 

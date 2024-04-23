@@ -42,7 +42,6 @@ class TournamentService {
         return $tournament;
     }
 
-
     public function getAllTournaments() {
         return $this->entityManager->createQueryBuilder()
             ->select('tournament', 'organizer', 'winner')
