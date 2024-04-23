@@ -41,7 +41,7 @@ class RegistrationService {
         $registration = new Registration();
         $registration->setTournament($tournament);
         $registration->setPlayer($user);
-        $registration->setRegistrationDate(new \DateTime()); // Explicitly set the current time as the registration date
+        $registration->setRegistrationDate(new \DateTime());
 
         $this->entityManager->persist($registration);
         $this->entityManager->flush();
