@@ -10,63 +10,53 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Service\SportMatchService;
 
 class SportMatchController extends AbstractController
 {
-    private $sportMatchRepository;
+    private SportMatchService $sportMatchService;
 
-    public function __construct(SportMatchRepository $sportMatchRepository)
-    {
-        $this->sportMatchRepository = $sportMatchRepository;
+    public function __construct(SportMatchService $sportMatchService) {
+        if (!$sportMatchService) {
+            throw new \LogicException('SportMatchService not injected correctly!');
+        }
+        $this->sportMatchService = $sportMatchService;
     }
 
     // Get the list of sport matches for a tournament
     #[Route('/api/tournaments/{id}/sport-matchs', name: 'sport_match_list', methods: ['GET'])]
-    public function list($id): Response
-    {
-        // Get all sport matches for the tournament
-        $sportMatches = $this->sportMatchRepository->findBy(['tournament' => $id]);
-
-        // Return a JSON response
+    public function list($id): Response {
+        $sportMatches = $this->sportMatchService->listSportMatches($id);
         return $this->json($sportMatches);
     }
 
     // Create a new sport match for a tournament
     #[Route('/api/tournaments/{id}/sport-matchs', name: 'sport_match_create', methods: ['POST'])]
-    public function create($id, EntityManagerInterface $entityManager, TournamentRepository $tournamentRepository): Response
-    {
-        // Fetch the Tournament entity from the database
-        $tournament = $tournamentRepository->find($id);
+    public function create($id, Request $request): Response {
+        try {
+            $matchData = json_decode($request->getContent(), true); // Ensure you're getting the data as an array
+            if (!is_array($matchData)) {
+                return $this->json(['error' => 'Invalid input data'], Response::HTTP_BAD_REQUEST);
+            }
 
-        if (!$tournament) {
-            throw $this->createNotFoundException('No tournament found for id '.$id);
+            $sportMatch = $this->sportMatchService->createSportMatch($id, $matchData);
+            return $this->json($sportMatch);
+        } catch (\Exception $e) {
+            // Handle exceptions, such as no tournament found or database errors
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        // Create a new sport match
-        $sportMatch = new SportMatch();
-        $sportMatch->setTournament($tournament);
-
-        // Save the sport match to the database
-        $entityManager->persist($sportMatch);
-        $entityManager->flush();
-
-        // Return a JSON response
-        return $this->json($sportMatch);
     }
 
     // Get details of a sport match
     #[Route('/api/tournaments/{idTournament}/sport-matchs/{idSportMatchs}', name: 'sport_match_show', methods: ['GET'])]
     public function show($idTournament, $idSportMatchs): Response
     {
-        // Get the sport match by ID
         $sportMatch = $this->sportMatchRepository->findOneBy(['tournament' => $idTournament, 'id' => $idSportMatchs]);
 
-        // If the sport match does not exist, return a 404 response
         if (!$sportMatch) {
             return $this->json(['error' => 'Sport match not found'], 404);
         }
 
-        // Return a JSON response
         return $this->json($sportMatch);
     }
 
@@ -74,24 +64,18 @@ class SportMatchController extends AbstractController
     #[Route('/api/tournaments/{idTournament}/sport-matchs/{idSportMatchs}', name: 'sport_match_update', methods: ['PUT'])]
     public function update($idTournament, $idSportMatchs, Request $request, EntityManagerInterface $entityManager): Response
     {
-        // Get the sport match by ID
         $sportMatch = $this->sportMatchRepository->findOneBy(['tournament' => $idTournament, 'id' => $idSportMatchs]);
 
-        // If the sport match does not exist, return a 404 response
         if (!$sportMatch) {
             return $this->json(['error' => 'Sport match not found'], 404);
         }
 
-        // Decode the JSON request body into an array
         $data = json_decode($request->getContent(), true);
 
-        // Update the result of the sport match
         $sportMatch->setResult($data['result']);
 
-        // Save the updated sport match to the database
         $entityManager->flush();
 
-        // Return a JSON response
         return $this->json($sportMatch);
     }
 
@@ -99,19 +83,15 @@ class SportMatchController extends AbstractController
     #[Route('/api/tournaments/{idTournament}/sport-matchs/{idSportMatchs}', name: 'sport_match_delete', methods: ['DELETE'])]
     public function delete($idTournament, $idSportMatchs, EntityManagerInterface $entityManager): Response
     {
-        // Get the sport match by ID
         $sportMatch = $this->sportMatchRepository->findOneBy(['tournament' => $idTournament, 'id' => $idSportMatchs]);
 
-        // If the sport match does not exist, return a 404 response
         if (!$sportMatch) {
             return $this->json(['error' => 'Sport match not found'], 404);
         }
 
-        // Remove the sport match from the database
         $entityManager->remove($sportMatch);
         $entityManager->flush();
 
-        // Return a 204 (No Content) response
         return new Response(null, 204);
     }
 

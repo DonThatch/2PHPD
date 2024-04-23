@@ -26,7 +26,7 @@ class SportMatch
     private ?User $player2 = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $status = null;
+    private ?string $status = 'Scheduled';
 
     public function getId(): ?int
     {
