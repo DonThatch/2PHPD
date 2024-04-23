@@ -16,6 +16,7 @@ class TournamentController extends AbstractController
 {
     private $tournamentRepository;
 
+<<<<<<< HEAD
     private $tournamentService;
 
     private $serializer;
@@ -24,17 +25,30 @@ class TournamentController extends AbstractController
         $this->tournamentRepository = $tournamentRepository;
         $this->tournamentService = $tournamentService;
         $this->serializer = $serializer;
+=======
+    public function __construct(TournamentRepository $tournamentRepository)
+    {
+        $this->tournamentRepository = $tournamentRepository;
+>>>>>>> parent of 8f33b8e (inscription front + maj controller)
     }
-
 
     // Get the list of tournaments
     #[Route('/api/tournaments', name: 'tournament_list', methods: ['GET'])]
+<<<<<<< HEAD
     public function list(): Response {
         $tournaments = $this->tournamentService->getAllTournaments();
         $json = $this->serializer->serialize($tournaments, 'json', ['groups' => 'tournament']);
         return new Response($json, 200, ['Content-Type' => 'application/json']);
-    }
+=======
+    public function list(): Response
+    {
+        // Get all tournaments
+        $tournaments = $this->tournamentRepository->findAll();
 
+        // Return a JSON response
+        return $this->json($tournaments);
+>>>>>>> parent of 8f33b8e (inscription front + maj controller)
+    }
 
     // Get details of a tournament
     #[Route('/api/tournaments/{id}', name: 'tournament_show', methods: ['GET'])]

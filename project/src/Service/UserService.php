@@ -22,6 +22,7 @@ class UserService {
         $user->setFirstName($data['first_name']);
         $user->setUsername($data['username']);
         $user->setEmailAddress($data['email_address']);
+        $user->setStatus($data['status']);
         $hashedPassword = $this->passwordHasher->hashPassword($user, $data['password']);
         $user->setPassword($hashedPassword);
 
