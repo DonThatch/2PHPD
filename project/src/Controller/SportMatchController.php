@@ -34,7 +34,7 @@ class SportMatchController extends AbstractController
     #[Route('/api/tournaments/{id}/sport-matchs', name: 'sport_match_create', methods: ['POST'])]
     public function create($id, Request $request): Response {
         try {
-            $matchData = json_decode($request->getContent(), true); // Ensure you're getting the data as an array
+            $matchData = json_decode($request->getContent(), true);
             if (!is_array($matchData)) {
                 return $this->json(['error' => 'Invalid input data'], Response::HTTP_BAD_REQUEST);
             }

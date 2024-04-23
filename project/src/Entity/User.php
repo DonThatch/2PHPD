@@ -6,6 +6,7 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
@@ -173,7 +174,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeRelRegistrationUser(Registration $relRegistrationUser): static
     {
         if ($this->relRegistrationUser->removeElement($relRegistrationUser)) {
-            // set the owning side to null (unless already changed)
             if ($relRegistrationUser->getPlayer() === $this) {
                 $relRegistrationUser->setPlayer(null);
             }
@@ -203,7 +203,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeRelSportMatchPlayer1(SportMatch $relSportMatchPlayer1): static
     {
         if ($this->relSportMatchPlayer1->removeElement($relSportMatchPlayer1)) {
-            // set the owning side to null (unless already changed)
             if ($relSportMatchPlayer1->getPlayer1() === $this) {
                 $relSportMatchPlayer1->setPlayer1(null);
             }
@@ -314,6 +313,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getUserIdentifier(): string
     {
-        // TODO: Implement getUserIdentifier() method.
+        return $this->username;
     }
 }
