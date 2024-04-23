@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 use App\Entity\Tournament;
 use DateTime;
 
@@ -17,9 +18,12 @@ class TournamentController extends AbstractController
 
     private $tournamentService;
 
-    public function __construct(TournamentRepository $tournamentRepository, TournamentService $tournamentService) {
+    private $serializer;
+
+    public function __construct(TournamentRepository $tournamentRepository, TournamentService $tournamentService, SerializerInterface $serializer) {
         $this->tournamentRepository = $tournamentRepository;
         $this->tournamentService = $tournamentService;
+        $this->serializer = $serializer;
     }
 
 
@@ -27,7 +31,8 @@ class TournamentController extends AbstractController
     #[Route('/api/tournaments', name: 'tournament_list', methods: ['GET'])]
     public function list(): Response {
         $tournaments = $this->tournamentService->getAllTournaments();
-        return $this->json($tournaments);
+        $json = $this->serializer->serialize($tournaments, 'json', ['groups' => 'tournament']);
+        return new Response($json, 200, ['Content-Type' => 'application/json']);
     }
 
 

@@ -53,7 +53,7 @@ class Tournament
     private Collection $relSportMatchTournament;
 
     #[ORM\ManyToOne(inversedBy: 'relOrgaTournamentUser')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?User $organizer = null;
 
     #[ORM\ManyToOne(inversedBy: 'relWinTournamentUser')]
