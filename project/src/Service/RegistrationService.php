@@ -30,7 +30,10 @@ class RegistrationService {
             throw new \Exception('User or tournament not found');
         }
 
-        $existingRegistration = $this->registrationRepository->findOneBy(['tournament' => $tournament, 'user' => $user]);
+        $existingRegistration = $this->registrationRepository->findOneBy([
+            'tournament' => $tournament,
+            'user' => $user
+        ]);
         if ($existingRegistration) {
             throw new \Exception('User already registered for this tournament');
         }
@@ -38,6 +41,7 @@ class RegistrationService {
         $registration = new Registration();
         $registration->setTournament($tournament);
         $registration->setPlayer($user);
+        $registration->setRegistrationDate(new \DateTime()); // Explicitly set the current time as the registration date
 
         $this->entityManager->persist($registration);
         $this->entityManager->flush();

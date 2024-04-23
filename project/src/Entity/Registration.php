@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\RegistrationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use DateTimeInterface;
 
 #[ORM\Entity(repositoryClass: RegistrationRepository::class)]
 class Registration
@@ -25,8 +26,13 @@ class Registration
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $registrationDate = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $status = null;
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private ?string $status = 'En attente';
+
+    public function __construct()
+    {
+        $this->registrationDate = new \DateTime();
+    }
 
     public function getId(): ?int
     {
@@ -74,10 +80,9 @@ class Registration
         return $this->status;
     }
 
-    public function setStatus(string $status): static
+    public function setStatus(string $status): self
     {
         $this->status = $status;
-
         return $this;
     }
 }

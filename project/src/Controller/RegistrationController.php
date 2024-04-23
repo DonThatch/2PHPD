@@ -44,7 +44,7 @@ class RegistrationController extends AbstractController
             $registration = $this->registrationService->registerUserToTournament($userId, $tournamentId);
             return $this->json([
                 'message' => 'Registered successfully',
-                'userId' => $registration->getUser()->getId(),
+                'userId' => $registration->getPlayer()->getId(),
                 'tournamentId' => $registration->getTournament()->getId()
             ]);
         } catch (\Exception $e) {
