@@ -4,6 +4,7 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$/project">
       <sourceFolder url="file://$MODULE_DIR$/project/src" isTestSource="false" packagePrefix="App\" />
+      <sourceFolder url="file://$MODULE_DIR$/project/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/project/tests" isTestSource="true" packagePrefix="App\Tests\" />
       <excludeFolder url="file://$MODULE_DIR$/project/vendor/composer" />
       <excludeFolder url="file://$MODULE_DIR$/project/vendor/doctrine/cache" />
