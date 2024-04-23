@@ -48,7 +48,6 @@ class RegistrationController extends AbstractController
                 'tournamentId' => $registration->getTournament()->getId()
             ]);
         } catch (\Exception $e) {
-            // Log the error or handle it appropriately
             $status = $e->getCode() >= 100 && $e->getCode() < 600 ? $e->getCode() : 500;
             return $this->json(['error' => $e->getMessage()], $status);
         }

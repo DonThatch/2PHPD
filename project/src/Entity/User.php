@@ -40,7 +40,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Registration>
      */
-    #[ORM\OneToMany(targetEntity: Registration::class, mappedBy: 'player')]
+    #[ORM\OneToMany(targetEntity: Registration::class, mappedBy: 'user')]
     private Collection $relRegistrationUser;
 
     /**
@@ -314,5 +314,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserIdentifier(): string
     {
         return $this->username;
+    }
+
+    public function getRegistrations(): array
+    {
+        $registrations = [];
+        foreach ($this->relRegistrationUser as $registration) {
+            $registrations[] = [
+                'id' => $registration->getId(),
+                'tournament' => $registration->getTournament()->getId(),
+                'registrationDate' => $registration->getRegistrationDate(),
+                'status' => $registration->getStatus(),
+            ];
+        }
+        return $registrations;
     }
 }

@@ -13,20 +13,19 @@ use App\Entity\User;
 class UserController extends AbstractController
 {
     private $userRepository;
+    private $userService;
 
-    public function __construct(UserRepository $userRepository)
+    public function __construct(UserRepository $userRepository, UserService $userService)
     {
         $this->userRepository = $userRepository;
+        $this->userService = $userService;
+
     }
 
     // Get the list of all users
     #[Route('/api/users', name: 'users_list', methods: ['GET'])]
-    public function list(): Response
-    {
-        // Get all users
-        $users = $this->userRepository->findAll();
-
-        // Return a JSON response
+    public function list(): Response {
+        $users = $this->userService->getAllUsers();
         return $this->json($users);
     }
 

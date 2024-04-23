@@ -31,6 +31,23 @@ class UserService {
         return $user;
     }
 
+    public function getAllUsers(): array {
+        $users = $this->entityManager->getRepository(User::class)->findAll();
+        $usersArray = [];
+        foreach ($users as $user) {
+            $usersArray[] = [
+                'id' => $user->getId(),
+                'lastName' => $user->getLastName(),
+                'firstName' => $user->getFirstName(),
+                'username' => $user->getUsername(),
+                'emailAddress' => $user->getEmailAddress(),
+                'status' => $user->getStatus(),
+                'registrations' => $user->getRegistrations(),
+            ];
+        }
+        return $usersArray;
+    }
+
     public function updateUser(User $user, array $data): User {
 
         if (isset($data['last_name'])) {
