@@ -15,21 +15,21 @@ class TournamentController extends AbstractController
 {
     private $tournamentRepository;
 
-    public function __construct(TournamentRepository $tournamentRepository)
-    {
+    private $tournamentService;
+
+    public function __construct(TournamentRepository $tournamentRepository, TournamentService $tournamentService) {
         $this->tournamentRepository = $tournamentRepository;
+        $this->tournamentService = $tournamentService;
     }
+
 
     // Get the list of tournaments
     #[Route('/api/tournaments', name: 'tournament_list', methods: ['GET'])]
-    public function list(): Response
-    {
-        // Get all tournaments
-        $tournaments = $this->tournamentRepository->findAll();
-
-        // Return a JSON response
+    public function list(): Response {
+        $tournaments = $this->tournamentService->getAllTournaments();
         return $this->json($tournaments);
     }
+
 
     // Get details of a tournament
     #[Route('/api/tournaments/{id}', name: 'tournament_show', methods: ['GET'])]

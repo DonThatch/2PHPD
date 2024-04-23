@@ -17,7 +17,7 @@ document.querySelector('form').addEventListener('submit', function(e) {
                 alert('Erreur: ' + data.error);
             } else {
                 alert('Inscription réussie avec l\'ID: ' + data.id);
-                window.location.href = 'admin.html'; // Redirection après succès
+                window.location.href = 'admin.html';
             }
         })
         .catch(error => {

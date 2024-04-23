@@ -41,4 +41,9 @@ class TournamentService {
 
         return $tournament;
     }
+
+    public function getAllTournaments() {
+        return $this->entityManager->getRepository(Tournament::class)->findAll();
+    }
+
 }
