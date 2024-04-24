@@ -26,6 +26,7 @@ class TournamentController extends AbstractController
         return $this->json($tournaments);
     }
 
+
     // Get details of a tournament
     #[Route('/api/tournaments/{id}', name: 'tournament_show', methods: ['GET'])]
     public function show($id): Response

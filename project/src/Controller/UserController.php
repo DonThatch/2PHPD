@@ -48,19 +48,14 @@ class UserController extends AbstractController
 
     // Get details of a user
     #[Route('/api/users/{id}', name: 'user_show', methods: ['GET'])]
-    public function show($id): Response
-    {
-        // Get the user by ID
-        $user = $this->userRepository->find($id);
-
-        // If the user does not exist, return a 404 response
+    public function show(int $id): Response {
+        $user = $this->userService->getUserById($id);
         if (!$user) {
             return $this->json(['error' => 'User not found'], 404);
         }
-
-        // Return a JSON response
         return $this->json($user);
     }
+
 
     // Update a user
     #[Route('/api/users/{id}', name: 'user_update', methods: ['PUT'])]

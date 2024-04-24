@@ -44,13 +44,12 @@ class TournamentService {
 
     public function getAllTournaments() {
         return $this->entityManager->createQueryBuilder()
-            ->select('tournament', 'organizer', 'winner')
-            ->addSelect('organizer', 'winner')
-            ->from('App\Entity\Tournament', 'tournament')
-            ->leftJoin('tournament.organizer', 'organizer')
-            ->leftJoin('tournament.winner', 'winner')
+            ->select('tournament.id, tournament.tournamentName', 'tournament.sport')
+            ->from(Tournament::class, 'tournament')
             ->getQuery()
             ->getResult();
     }
+
+
 
 }

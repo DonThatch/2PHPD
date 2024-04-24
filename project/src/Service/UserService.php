@@ -76,5 +76,9 @@ class UserService {
         return $user;
     }
 
+    public function getUserById(int $id): ?User {
+        return $this->entityManager->getRepository(User::class)->find($id);
+    }
+
 
 }

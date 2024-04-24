@@ -49,12 +49,6 @@ K
 src/Service/UserService.php,0/0/004fcc30d3beb61e17be4d8de9b0902a9ee19416
 S
 #src/Service/RegistrationService.php,7/6/76b1d5ce18f7787cddedbda0f478c43d850c0503
-@
-front/admin.html,5/d/5d51d613fce580ec5b6cca73fe326e68c9c90f77
-D
-front/connexion.html,e/0/e0437e01dbbbc750154e49e0c6d06911389d60e9
-F
-front/inscription.html,2/c/2c90750023ef476ae92f09fa6a77bc83b2e517d9
 W
 'tests/Controller/UserControllerTest.php,f/6/f6cb128cc58c56f60ff821f256dca072826a7066
 Q

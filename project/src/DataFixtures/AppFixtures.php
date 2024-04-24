@@ -5,7 +5,7 @@ namespace App\DataFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use App\Entity\Tournament;
-use App\Entity\Organizer;
+use App\Entity\User;
 use DateTime;
 
 class AppFixtures extends Fixture
